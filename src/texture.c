@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
-
+#include "wolf3d.h"
+/*
 static void		slice_shaded(int t[4], int from_to[2], int *txt_buffer,
 	t_view *view)
 {
@@ -92,61 +92,30 @@ void			draw_textured_walls(int *walls, int *facing, int *txt_offset,
 		i++;
 	}
 }
-
-void			*threaded_textured_walls(void *thread_param)
-{
-	t_pack	*pack;
-	double	height;
-	int		from_to[2];
-	int		t[4];
-
-	pack = (t_pack *)thread_param;
-	t[0] = pack->thread_id;
-	while (t[0] < 1280)
-	{
-		height = 256.0 / pack->walls[1279 - t[0]] * 1024.0;
-		t[3] = height > 800 ? height - 800 : 0;
-		height = height > 800 ? 800 : height;
-		from_to[0] = 400 - height / 2;
-		from_to[1] = from_to[0] + height;
-		t[1] = t[0] & 255;
-		t[2] = pack->txt_offset[1279 - t[0]];
-		if (pack->view->shading_on)
-			slice_shaded(t, from_to, pack->view->nesw
-				[pack->facing[1279 - t[0]]], pack->view);
-		else
-			slice_raw(t, from_to, pack->facing[1279 - t[0]], pack->view);
-		t[0] += 8;
-	}
-	(*pack->finished_threads)++;
-	return (NULL);
-}
-
+*/
 void			load_textures(t_view *view)
 {
 	char	*texture_filenames[4];
-	int		ret_h;
-	int		ret_w;
 	int		i;
 
 	i = -1;
-	texture_filenames[0] = "textures/tx_north.xpm";
-	texture_filenames[1] = "textures/tx_east.xpm";
-	texture_filenames[2] = "textures/tx_south.xpm";
-	texture_filenames[3] = "textures/tx_west.xpm";
+	texture_filenames[0] = "assets/north.png";
+	texture_filenames[1] = "assets/east.png";
+	texture_filenames[2] = "assets/south.png";
+	texture_filenames[3] = "assets/west.png";
 	while (i++ < 3)
 	{
-		if (!(view->txt_nesw[i] = mlx_xpm_file_to_image(view->mlx,
-			texture_filenames[i], &ret_h, &ret_w)))
+		//if (!(view->txt_nesw[i] = mlx_xpm_file_to_image(view->mlx, texture_filenames[i], &ret_h, &ret_w)))
+		if (!(view->txt_nesw[i] = IMG_Load(texture_filenames[i])))
 			exit(print_error(TEXTURE_LOAD_FAILURE));
-		if (ret_h != 256 || ret_w != 256)
+		if (view->txt_nesw[i]->w != 256 || view->txt_nesw[i]->h != 256)
 			exit(print_error(INVALID_TEXTURE));
-		view->img_data_nesw[i].buffer =
+		/*view->img_data_nesw[i].buffer =
 		mlx_get_data_addr(view->txt_nesw[i],
 		&(view->img_data_nesw[i].bits_per_pixel),
 		&(view->img_data_nesw[i].bytes_per_line),
 		&(view->img_data_nesw[i].endianness));
-		view->img_data_nesw[i].int_buffer = (int*)view->img_data_nesw[i].buffer;
-		view->nesw[i] = view->img_data_nesw[i].int_buffer;
+		view->img_data_nesw[i].int_buffer = (int*)view->img_data_nesw[i].buffer;*/
+		view->nesw[i] = view->txt_nesw[i]->pixels;
 	}
 }

@@ -1,6 +1,6 @@
 #include "wolf3d.h"
 
-double      			time_now()
+double      			time_ms_double(void)
 {
 #ifdef __EMSCRIPTEN__
 	return emscripten_get_now();
@@ -9,20 +9,20 @@ double      			time_now()
 #endif
 }
 
-void    				prepare_gpu(void)
+void    				prepare_gpu(t_view *view)
 {
-	if (SDL_MUSTLOCK(g_surf))
-		SDL_LockSurface(g_surf);
+	if (SDL_MUSTLOCK(view->surf))
+		SDL_LockSurface(view->surf);
 }
 
-void    				update_gpu(void)
+void    				update_gpu(t_view *view)
 {
-	if (SDL_MUSTLOCK(g_surf))
-		SDL_UnlockSurface(g_surf);
-	g_tex = SDL_CreateTextureFromSurface(g_ren, g_surf);
-	SDL_RenderCopy(g_ren, g_tex, NULL, NULL);
-	SDL_RenderPresent(g_ren);
-	SDL_DestroyTexture(g_tex);
+	if (SDL_MUSTLOCK(view->surf))
+		SDL_UnlockSurface(view->surf);
+	view->tex = SDL_CreateTextureFromSurface(view->ren, view->surf);
+	SDL_RenderCopy(view->ren, view->tex, NULL, NULL);
+	SDL_RenderPresent(view->ren);
+	SDL_DestroyTexture(view->tex);
 }
 
 void					quit_cleanly(int code)

@@ -12,13 +12,15 @@
 
 NAME = wolf3d
 SRC = $(wildcard src/*.c)
+SRC += $(wildcard src/ft_str/*.c)
 OBJ = $(subst .c,.o,$(SRC))
-CFLAGS = -Wall -Wextra -Iinclude
+CFLAGS = -Wall -Wextra -Iinclude -g
 LIBS = -lSDL2 -lSDL2_ttf -lSDL2_image
 LINUX_LINKS = -I ./mlx -L ./mlx -l mlx -lm -lXext -lX11 -lpthread
 ASSETS = assets
 EM_TEMPLATE = html_template/minimal.html
-EM_FLAGS = -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_TTF=2 --preload-file $(ASSETS) --shell-file $(EM_TEMPLATE)
+EM_FLAGS = -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS='["png"]' -s USE_SDL_TTF=2 --preload-file $(ASSETS)
+EM_PROD = --shell-file $(EM_TEMPLATE)
 EM_NAME = index.html
 EM_OUT_DIR = out
 
@@ -28,8 +30,15 @@ emcc: fclean
 	-emmake make
 	@emcc $(EM_FLAGS) $(OBJ) -o $(EM_OUT_DIR)/$(EM_NAME)
 
+prod: fclean
+	-emmake make
+	@emcc $(EM_FLAGS) $(EM_PROD) $(OBJ) -o $(EM_OUT_DIR)/$(EM_NAME)
+
 web: emcc
 	python3 -m http.server & google-chrome-stable http://0.0.0.0:8000/$(EM_OUT_DIR)/$(EM_NAME)
+
+linux: fclean $(NAME)
+	./wolf3d
 
 $(NAME): $(OBJ)
 	@gcc $(CFLAGS) $(OBJ) $(LIBS) -o $(NAME) $(LINUX_LINKS)

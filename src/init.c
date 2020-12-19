@@ -1,5 +1,31 @@
 #include "wolf3d.h"
 
+void					init_systems(t_view *v)
+{
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_EVENTS) < 0)
+		quit_error("Could not initialize SDL base systems");
+	if (TTF_Init() != 0)
+		quit_error("Could not initialize SDL_ttf extension");
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+		quit_error("Could not initialize SDL_image extension");
+	SDL_CreateWindowAndRenderer(640, 480, 0, &v->win, &v->ren);
+	v->surf = SDL_CreateRGBSurface(0, 640, 480, 32, 0, 0, 0, 0);
+	if (v->win == NULL || v->ren == NULL || v->surf == NULL)
+		quit_error("Could not initialize window, surface and renderer.");
+}
+
+void					init_memory(t_view *v)
+{
+	v->ibm_font = TTF_OpenFont("assets/ibm_bios.ttf", 12);
+	if (!v->ibm_font)
+		quit_error("Fatal Error: TTF_OpenFont failed.");
+	v->font_surf = TTF_RenderText_Solid(v->ibm_font, "Kimpsut ja Kampsut", v->color_white);
+	if (!v->font_surf)
+		quit_error("Fatal Error: TTF_RenderText_Solid failed.");
+	v->pix = v->surf->pixels;
+	v->pix_limit = (v->surf->h * v->surf->w);
+}
+
 static unsigned int	color(unsigned int percent, unsigned int color)
 {
 	unsigned int red;
@@ -88,23 +114,47 @@ void		initialize_states(t_view *view)
 void		initialize_view(t_view *view, char *title)
 {
 	/*
+	 * // WONT NEED
 	view->mlx = mlx_init();
-	load_textures(view);
+	// WONT NEED
 	view->idp = &(view->img_data);
+	 // WONT NEED
 	if (!(view->window = mlx_new_window(view->mlx, 1280, 800, title)))
 		exit(print_error(MEMORY_ERROR));
+	 // WONT NEED
 	if (!(view->img = mlx_new_image(view->mlx, 1280, 800)))
 		exit(print_error(MEMORY_ERROR));
+	 // WONT NEED
 	view->idp->buffer = mlx_get_data_addr(view->img,
 										  &(view->idp->bits_per_pixel), &(view->idp->bytes_per_line),
 										  &(view->idp->endianness));
 	view->idp->int_buffer = (int *)view->idp->buffer;
+	 // WONT NEED
 	mlx_do_key_autorepeatoff(view->mlx);
+	 // WONT NEED
 	mlx_clear_window(view->mlx, view->window);
+	 // WONT NEED
 	hook_input(view);*/
+
+	// ALREADY DONE EARLIER IN CODE ATM
+	/*if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_EVENTS) < 0)
+		quit_error("Could not initialize SDL base systems");
+	if (TTF_Init() != 0)
+		quit_error("Could not initialize SDL_ttf extension");
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+		quit_error("Could not initialize SDL_image extension");
+	SDL_CreateWindowAndRenderer(640, 480, 0, &g_win, &g_ren);
+	g_surf = SDL_CreateRGBSurface(0, 640, 480, 32, 0, 0, 0, 0);
+	if (g_win == NULL || g_ren == NULL || g_surf == NULL)
+		quit_error("Could not initialize window, surface and renderer.");*/
+	view->quit = 0;
 	if (title != NULL)
-		puts("initializing view, title was not null!");
+		load_textures(view);
 	populate_doubles_tables(view->rads360, view->rads7680,
 							view->tans7680, view->fisheye1280);
 	populate_color_tables(view->wall_colors);
+	view->color_white.a = 255;
+	view->color_white.r = 255;
+	view->color_white.g = 255;
+	view->color_white.b = 255;
 }

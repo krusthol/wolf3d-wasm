@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 int		hits_wall(t_grid *grid, int x, int y)
 {

@@ -2,4 +2,5 @@
 
 Building, refer to emscripten documentation and install
 Remember to activate emsdk in the shell with for example
-source ~/emsdk/emsdk_env.sh
+
+`source ~/emsdk/emsdk_env.sh`
