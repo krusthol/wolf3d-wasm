@@ -83,7 +83,6 @@ void		initialize_states(t_view *view)
 	view->minimap_on = 0;
 	view->textures_on = 1;
 	view->shading_on = 1;
-	view->print_player_on = 0;
 	view->p->rotating[0] = 0;
 	view->p->rotating[1] = 0;
 	view->p->stepping[0] = 0;

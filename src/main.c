@@ -1,25 +1,21 @@
 #include "wolf3d.h"
 
-static void 			print_player(t_view *view)
+static void		main_loop(void *varg)
 {
-	printf("player.x && player.y [%d, %d]\n", view->p->x, view->p->y);
-}
+	t_view		*view;
 
-static void				main_loop(t_view *view)
-{
+	view = (t_view*)varg;
 	while (SDL_PollEvent(&view->event) != 0)
 	{
 		if (view->event.type == SDL_KEYUP || view->event.type == SDL_KEYDOWN)
 			process_input(view);
 		else if (view->event.type == SDL_QUIT)
 			view->quit = 1;
-		if (view->print_player_on)
-			print_player(view);
-		calc_movements(view);
 	}
+	calc_movements(view);
 }
 
-static int 	run_file_check(int argc, char *argv[], t_view *view)
+static int		run_file_check(int argc, char *argv[], t_view *view)
 {
 	int		not_file;
 	int		is_bad;
@@ -52,7 +48,7 @@ static int 	run_file_check(int argc, char *argv[], t_view *view)
 	return (0);
 }
 
-int			main(int argc, char *argv[])
+int				main(int argc, char *argv[])
 {
 	t_view	view;
 
@@ -65,17 +61,11 @@ int			main(int argc, char *argv[])
 		return (0);
 	initialize_states(&view);
 	cast_walls(-1, view.g, view.p, &view);
-	/*
-	mlx_loop_hook(view.mlx, calc_movements, &view);
-	mlx_loop(view.mlx);
-	return (0);
-	 */
-
 #ifdef __EMSCRIPTEN__
-	emscripten_set_main_loop(main_loop, 0, 1);
+	emscripten_set_main_loop_arg(main_loop, (void*)&view, 0, 1);
 #else
 	while (!view.quit)
-		main_loop(&view);
+		main_loop((void*)&view);
 #endif
 	SDL_Quit();
 	return (0);
