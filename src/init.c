@@ -1,0 +1,110 @@
+#include "wolf3d.h"
+
+static unsigned int	color(unsigned int percent, unsigned int color)
+{
+	unsigned int red;
+	unsigned int green;
+	unsigned int blue;
+
+	if (percent > 99)
+		return (color);
+	blue = ((color & 0xFF) * percent) / 100;
+	green = (((color >> 8) & 0xFF) * percent) / 100;
+	red = (((color >> 16) & 0xFF) * percent) / 100;
+	return ((red << 16) | (green << 8) | blue);
+}
+
+void		populate_color_tables(unsigned int wall_colors[600])
+{
+	int i;
+
+	i = -1;
+	while (i++ < 599)
+	{
+		if (i < 100)
+			wall_colors[i] = color(i, 0x00FFFF);
+		else if (i < 200)
+			wall_colors[i] = color(i - 100, 0xFF0000);
+		else if (i < 300)
+			wall_colors[i] = color(i - 200, 0xFF00FF);
+		else if (i < 400)
+			wall_colors[i] = color(i - 300, 0xFFFF00);
+		else if (i < 500)
+			wall_colors[i] = color(i - 400, 0x484848);
+		else if (i < 600)
+			wall_colors[i] = color(i - 500, 0x888888);
+	}
+}
+
+void		populate_doubles_tables(long double rads360[360], long double
+rads7680[7680], long double tans7680[7680], long double fisheye1280[1280])
+{
+	int i;
+
+	rads360[0] = 0.000001;
+	rads7680[0] = 0.000001;
+	tans7680[0] = 0.000001;
+	i = 1;
+	while (i < 360)
+	{
+		rads360[i] = i * (M_PI / 180.0);
+		i++;
+	}
+	i = 1;
+	while (i < 7680)
+	{
+		rads7680[i] = (i * (M_PI / 180.0)) / 21.3333333333333333333;
+		tans7680[i] = tanl(rads7680[i]);
+		i++;
+	}
+	tans7680[3840] = 0.000001;
+	i = -1;
+	while (i++ < 640)
+		fisheye1280[i] = cosl(rads360[(int)(330 + (i * 0.046875))]);
+	while (i++ < 1279)
+		fisheye1280[i] = cosl(rads360[(int)(-29 + i * 0.046875)]);
+	fisheye1280[641] = 1.0;
+}
+
+void		initialize_states(t_view *view)
+{
+	view->minimap_on = 0;
+	view->textures_on = 1;
+	view->shading_on = 1;
+	view->threading_on = 1;
+	/*
+	view->p->rotating[0] = 0;
+	view->p->rotating[1] = 0;
+	view->p->stepping[0] = 0;
+	view->p->stepping[1] = 0;
+	view->p->move_look = 0;
+	view->p->stepping_velo = 0;
+	view->p->rotation_velo = 0;
+	view->p->rad = view->p->move_look * (M_PI / 180.0);
+	 */
+	//assign_px_py(view->g, view->p);
+}
+
+void		initialize_view(t_view *view, char *title)
+{
+	/*
+	view->mlx = mlx_init();
+	load_textures(view);
+	view->idp = &(view->img_data);
+	if (!(view->window = mlx_new_window(view->mlx, 1280, 800, title)))
+		exit(print_error(MEMORY_ERROR));
+	if (!(view->img = mlx_new_image(view->mlx, 1280, 800)))
+		exit(print_error(MEMORY_ERROR));
+	view->idp->buffer = mlx_get_data_addr(view->img,
+										  &(view->idp->bits_per_pixel), &(view->idp->bytes_per_line),
+										  &(view->idp->endianness));
+	view->idp->int_buffer = (int *)view->idp->buffer;
+	mlx_do_key_autorepeatoff(view->mlx);
+	mlx_clear_window(view->mlx, view->window);
+	hook_input(view);*/
+	if (title != NULL)
+		puts("initializing view, title was not null!");
+	populate_doubles_tables(view->rads360, view->rads7680,
+							view->tans7680, view->fisheye1280);
+	populate_color_tables(view->wall_colors);
+}

@@ -1,0 +1,165 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wolf3d.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: krusthol <krusthol@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/03 16:10:00 by krusthol          #+#    #+#             */
+/*   Updated: 2020/02/07 19:04:15 by krusthol         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef WOLF3D_H
+# define WOLF3D_H
+
+# include <fcntl.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <math.h>
+# include <pthread.h>
+# include "libft/libft.h"
+# include "libmlx/libmlx.h"
+# define BUFF_SIZE 1000000
+# define KEY_ESC 65307
+# define KEY_SPACE 32
+# define KEY_TAB 65289
+# define KEY_ENTER 65293
+# define KEY_UP 65362
+# define KEY_RIGHT 65363
+# define KEY_DOWN 65364
+# define KEY_LEFT 65361
+# define KEY_W 119
+# define KEY_D 100
+# define KEY_S 115
+# define KEY_A 97
+# define KEY_T 116
+# define KEY_H 104
+# define KEY_SLASH 47
+
+enum					e_facing{NORTH, EAST, SOUTH, WEST};
+enum					e_err{MAP_CONTENT = 1, MAP_FILE, MAP_SIZE, MAP_SHAPE,
+	INVALID_TEXTURE, MEMORY_ERROR, TEXTURE_LOAD_FAILURE, MAP_DIRECTORY};
+
+typedef struct			s_player
+{
+	long double			rad;
+	int					r_index;
+	int					ray_xy[2];
+	int					ray_dist;
+	int					x;
+	int					y;
+	int					move_look;
+	int					move_facing;
+	int					is_down;
+	int					is_right;
+	int					rotating[2];
+	int					rotation_velo;
+	int					stepping[2];
+	int					stepping_velo;
+}						t_player;
+
+typedef struct			s_line
+{
+	int					x1;
+	int					x2;
+	int					y1;
+	int					y2;
+	int					color;
+	int					fx;
+	int					fy;
+	int					px;
+	int					py;
+}						t_line;
+
+typedef struct			s_img_data
+{
+	int					*int_buffer;
+	char				*buffer;
+	int					bits_per_pixel;
+	int					bytes_per_line;
+	int					endianness;
+}						t_img_data;
+
+typedef struct			s_grid
+{
+	char				**grid;
+	int					rows;
+	int					cols;
+}						t_grid;
+
+typedef struct			s_pack
+{
+	int					thread_id;
+	struct s_view		*view;
+	int					*finished_threads;
+	int					*walls;
+	int					*facing;
+	int					*txt_offset;
+}						t_pack;
+
+typedef struct			s_view
+{
+	void				*mlx;
+	void				*window;
+	void				*img;
+	struct s_img_data	img_data;
+	struct s_img_data	*idp;
+	struct s_grid		grid;
+	struct s_grid		*g;
+	struct s_player		player;
+	struct s_player		*p;
+	void				*txt_nesw[4];
+	struct s_img_data	img_data_nesw[4];
+	int					*nesw[4];
+	int					minimap_on;
+	int					textures_on;
+	int					shading_on;
+	int					threading_on;
+	long double			fisheye1280[1280];
+	long double			rads360[360];
+	long double			rads7680[7680];
+	long double			tans7680[7680];
+	int					wall_colors[600];
+}						t_view;
+
+int						get_next_line(const int fd, char **line);
+char					**grid_set(int rows, int columns, char *data);
+int						check_mapfile(char *file_arg, t_view *view);
+void					close_and_exit(int fd_to_close, int code);
+void					print_usage_and_exit(int code);
+int						print_error(int code);
+void					print_intro(char *file_arg);
+void					load_textures(t_view *view);
+void					assign_px_py(t_grid *grid, t_player *p);
+void					hook_input(t_view *view);
+int						calc_movements(void *view_param);
+void					assign_clip_values(int *cx, int *cy, int move_facing);
+void					stop_velocity(t_player *p);
+void					print_keyhelp(void);
+int						color(unsigned int percent, int color);
+void					pixel_to_img(int *buffer, unsigned int x,
+							unsigned int y, int color);
+void					cast_walls(int i, t_grid *grid, t_player *p,
+							t_view *view);
+int						check_vert_intersect(t_grid *grid, t_player *p,
+							int res[2], long double tans[7680]);
+int						check_horz_intersect(t_grid *grid, t_player *p,
+							int res[2], long double tans[7680]);
+int						hits_wall(t_grid *grid, int x, int y);
+int						cos_distance(int res, int p, long double rad);
+int						sin_distance(int res, int p, long double rad);
+int						pick_closer(t_player *p, int vert[2], int horz[2],
+							int res[2]);
+void					draw_walls(int *walls, int *facing, int *txt_offset,
+							t_view *view);
+void					draw_textured_walls(int *walls, int *facing,
+							int *txt_offset, t_view *view);
+void					*threaded_textured_walls(void *view_param);
+void					shaded_roof(int x, int from, t_view *view);
+void					shaded_floor(int x, int to, t_view *view);
+void					line(t_line *l, t_view *v);
+void					offset_line(int x, int y, t_line *l);
+void					draw_minimap(t_view *view);
+
+#endif
