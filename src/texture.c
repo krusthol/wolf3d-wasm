@@ -105,17 +105,10 @@ void			load_textures(t_view *view)
 	texture_filenames[3] = "assets/west.png";
 	while (i++ < 3)
 	{
-		//if (!(view->txt_nesw[i] = mlx_xpm_file_to_image(view->mlx, texture_filenames[i], &ret_h, &ret_w)))
 		if (!(view->txt_nesw[i] = IMG_Load(texture_filenames[i])))
 			exit(print_error(TEXTURE_LOAD_FAILURE));
 		if (view->txt_nesw[i]->w != 256 || view->txt_nesw[i]->h != 256)
 			exit(print_error(INVALID_TEXTURE));
-		/*view->img_data_nesw[i].buffer =
-		mlx_get_data_addr(view->txt_nesw[i],
-		&(view->img_data_nesw[i].bits_per_pixel),
-		&(view->img_data_nesw[i].bytes_per_line),
-		&(view->img_data_nesw[i].endianness));
-		view->img_data_nesw[i].int_buffer = (int*)view->img_data_nesw[i].buffer;*/
 		view->nesw[i] = view->txt_nesw[i]->pixels;
 	}
 }

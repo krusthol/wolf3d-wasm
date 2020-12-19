@@ -12,8 +12,11 @@ static void				main_loop(t_view *view)
 {
 	while (SDL_PollEvent(&view->event) != 0)
 	{
-		if (view->event.type == SDL_QUIT)
+		if (view->event.type == SDL_KEYUP || view->event.type == SDL_KEYDOWN)
+			process_input(view);
+		else if (view->event.type == SDL_QUIT)
 			view->quit = 1;
+		calc_movements(view);
 		hello_w3d_wasm(view);
 	}
 }
@@ -62,10 +65,9 @@ int			main(int argc, char *argv[])
 	view.p = &(view.player);
 	if (run_file_check(argc, argv, &view))
 		return (0);
-
-	/*
 	initialize_states(&view);
 	cast_walls(-1, view.g, view.p, &view);
+	/*
 	mlx_loop_hook(view.mlx, calc_movements, &view);
 	mlx_loop(view.mlx);
 	return (0);

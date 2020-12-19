@@ -97,8 +97,6 @@ void		initialize_states(t_view *view)
 	view->minimap_on = 0;
 	view->textures_on = 1;
 	view->shading_on = 1;
-	view->threading_on = 1;
-	/*
 	view->p->rotating[0] = 0;
 	view->p->rotating[1] = 0;
 	view->p->stepping[0] = 0;
@@ -107,8 +105,7 @@ void		initialize_states(t_view *view)
 	view->p->stepping_velo = 0;
 	view->p->rotation_velo = 0;
 	view->p->rad = view->p->move_look * (M_PI / 180.0);
-	 */
-	//assign_px_py(view->g, view->p);
+	assign_px_py(view->g, view->p);
 }
 
 void		initialize_view(t_view *view, char *title)

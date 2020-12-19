@@ -20,19 +20,20 @@ void	close_and_exit(int fd_to_close, int code)
 
 void	print_keyhelp(void)
 {
-	write(1, "wolf3d keyhelp:\n", 16);
-	write(1, "\twasd arrows\tmove\n", 18);
-	write(1, "\ttab\t\ttoggle minimap\n", 21);
-	write(1, "\tenter space t\tsettings\n", 24);
-	write(1, "\th / ?\t\tshow keyhelp\n", 21);
-	write(1, "\tesc\t\tquit wolf3d\n", 18);
+	write(1, "wolf3d-wasm keyhelp:\n", 21);
+	write(1, "\tWASD arrows\tMove\n", 18);
+	write(1, "\tTab\t\tToggle minimap\n", 21);
+	write(1, "\tEnter\t\tToggle shading\n", 23);
+	write(1, "\tSpace\t\tToggle texturing\n", 25);
+	write(1, "\tH\t\tShow keyhelp\n", 17);
+	write(1, "\tEsc\t\tQuit wolf3d-wasm\n", 23);
 }
 
 void	print_intro(char *file_arg)
 {
-	write(1, "wolf3d valid map [", 18);
+	write(1, "wolf3d-wasm valid map [", 23);
 	write(1, file_arg, ft_strlen(file_arg));
-	write(1, "] loaded. show keyhelp by pressing H / (?)\n", 43);
+	write(1, "] loaded! Show keyhelp by pressing H\n", 37);
 }
 
 int		print_error(int code)
@@ -59,10 +60,4 @@ int		print_error(int code)
 	if (code == MAP_DIRECTORY)
 		write(1, "parameter can not be a directory\n", 33);
 	return (code);
-}
-
-void	print_usage_and_exit(int code)
-{
-	write(1, "wolf3d usage:\n./wolf3d [mapfile]\n", 33);
-	exit(code);
 }

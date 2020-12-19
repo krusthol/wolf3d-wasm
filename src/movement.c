@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 static void	coast_rotate(t_player *p, long double *rads360)
 {
@@ -104,11 +104,8 @@ static void	rotate_player(t_player *p, long double *rads360, int direction)
 	}
 }
 
-int			calc_movements(void *view_param)
+int			calc_movements(t_view *view)
 {
-	t_view		*view;
-
-	view = (t_view *)view_param;
 	if (view->p->rotating[0] && view->p->rotating[1])
 		coast_rotate(view->p, view->rads360);
 	else if (view->p->rotating[0])

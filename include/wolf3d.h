@@ -14,6 +14,7 @@
 
 enum					e_err{MAP_CONTENT = 1, MAP_FILE, MAP_SIZE, MAP_SHAPE,
 	INVALID_TEXTURE, MEMORY_ERROR, TEXTURE_LOAD_FAILURE, MAP_DIRECTORY};
+enum					e_facing{NORTH, EAST, SOUTH, WEST};
 
 /*	disabled from t_view
   	struct s_img_data	img_data;
@@ -98,10 +99,9 @@ void					init_systems(t_view *view);
 void					init_memory(t_view *view);
 
 /* from console.c */
+void					print_keyhelp(void);
 int						print_error(int code);
 void					close_and_exit(int fd_to_close, int code);
-void					print_usage_and_exit(int code);
-int						print_error(int code);
 void					print_intro(char *file_arg);
 
 // gnl.c
@@ -117,5 +117,25 @@ int						check_mapfile(char *file_arg, t_view *view);
 /* from texture.c
 void					draw_textured_walls(int *walls, int *facing, int *txt_offset, t_view *view);*/
 void					load_textures(t_view *view);
+
+// geometry.c
+int						cos_distance(int res, int p, long double rad);
+int						sin_distance(int res, int p, long double rad);
+int						pick_closer(t_player *p, int vert[2], int horz[2], int res[2]);
+
+// intersect.c
+int						check_vert_intersect(t_grid *grid, t_player *p,
+												int res[2], long double tans[7680]);
+int						check_horz_intersect(t_grid *grid, t_player *p,
+												int res[2], long double tans[7680]);
+
+// casting.c
+void					cast_walls(int i, t_grid *grid, t_player *p, t_view *view);
+
+// movement.c
+int						calc_movements(t_view *view);
+
+// input.c
+void					process_input(t_view *view);
 
 #endif

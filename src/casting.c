@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 static int	abandon_result(int result[2], int face, t_grid *grid)
 {
@@ -99,5 +99,5 @@ void		cast_walls(int i, t_grid *grid, t_player *p, t_view *view)
 	}
 	p->rad = view->rads360[(p->move_look)];
 	p->move_facing = facing[639];
-	draw_walls(walls, facing, txt_offset, view);
+	//draw_walls(walls, facing, txt_offset, view);
 }
