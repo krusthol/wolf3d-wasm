@@ -1,11 +1,8 @@
 #include "wolf3d.h"
 
-static void				hello_w3d_wasm(t_view *view)
+static void 			print_player(t_view *view)
 {
-	prepare_gpu(view);
-	SDL_FillRect(view->surf, NULL, 0xff00ff00);
-	SDL_BlitSurface(view->font_surf, NULL, view->surf, NULL);
-	update_gpu(view);
+	printf("player.x && player.y [%d, %d]\n", view->p->x, view->p->y);
 }
 
 static void				main_loop(t_view *view)
@@ -16,8 +13,9 @@ static void				main_loop(t_view *view)
 			process_input(view);
 		else if (view->event.type == SDL_QUIT)
 			view->quit = 1;
+		if (view->print_player_on)
+			print_player(view);
 		calc_movements(view);
-		hello_w3d_wasm(view);
 	}
 }
 

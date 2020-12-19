@@ -22,6 +22,19 @@ enum					e_facing{NORTH, EAST, SOUTH, WEST};
 	struct s_img_data	*idp;
 */
 
+typedef struct			s_line
+{
+	int					x1;
+	int					x2;
+	int					y1;
+	int					y2;
+	int					color;
+	int					fx;
+	int					fy;
+	int					px;
+	int					py;
+}						t_line;
+
 typedef struct			s_player
 {
 	long double			rad;
@@ -58,8 +71,8 @@ typedef struct			s_view
 	struct SDL_Renderer *ren;
 	struct SDL_Texture	*tex;
 
-	uint32_t			*pix;
-	int 				pix_limit;
+	unsigned int		*pix;
+	unsigned int		pix_limit;
 
 	int 				quit;
 	struct _TTF_Font	*ibm_font;
@@ -78,6 +91,7 @@ typedef struct			s_view
 	int					minimap_on;
 	int					textures_on;
 	int					shading_on;
+	int 				print_player_on;
 
 	long double			fisheye1280[1280];
 	long double			rads360[360];
@@ -108,14 +122,17 @@ void					print_intro(char *file_arg);
 int						get_next_line(const int fd, char **line);
 
 // grid.c
+int						hits_wall(t_grid *grid, int x, int y);
+void					assign_clip_values(int *cx, int *cy, int move_facing);
+void					stop_velocity(t_player *p);
 char					**grid_set(int rows, int columns, char *data);
 void					assign_px_py(t_grid *grid, t_player *p);
 
 // file.c
 int						check_mapfile(char *file_arg, t_view *view);
 
-/* from texture.c
-void					draw_textured_walls(int *walls, int *facing, int *txt_offset, t_view *view);*/
+// texture.c
+void					draw_textured_walls(const int *walls, int *facing, const int *txt_offset, t_view *view);
 void					load_textures(t_view *view);
 
 // geometry.c
@@ -124,10 +141,8 @@ int						sin_distance(int res, int p, long double rad);
 int						pick_closer(t_player *p, int vert[2], int horz[2], int res[2]);
 
 // intersect.c
-int						check_vert_intersect(t_grid *grid, t_player *p,
-												int res[2], long double tans[7680]);
-int						check_horz_intersect(t_grid *grid, t_player *p,
-												int res[2], long double tans[7680]);
+int						check_vert_intersect(t_grid *grid, t_player *p, int res[2], long double tans[7680]);
+int						check_horz_intersect(t_grid *grid, t_player *p, int res[2], long double tans[7680]);
 
 // casting.c
 void					cast_walls(int i, t_grid *grid, t_player *p, t_view *view);
@@ -137,5 +152,21 @@ int						calc_movements(t_view *view);
 
 // input.c
 void					process_input(t_view *view);
+
+// pixel.c
+unsigned int			color(unsigned int percent, unsigned int color);
+void					pixel_to_img(unsigned int *buffer, unsigned int x, unsigned int y, unsigned int color);
+void					shaded_roof(int x, int from, t_view *view);
+void					shaded_floor(int x, int to, t_view *view);
+
+// line.c
+void					line(t_line *l, t_view *v);
+void					offset_line(int x, int y, t_line *l);
+
+// minimap.c
+void					draw_minimap(t_view *view);
+
+// wall_drawing.c
+void					draw_walls(int *walls, int *facing, int *txt_offset, t_view *view);
 
 #endif

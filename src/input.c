@@ -30,7 +30,7 @@ static void	key_toggle(t_view *view, int *toggle, char *message)
 		mlx_string_put(view->mlx, view->window, 620, 250, 0xFFFFFF, "OFF"); */
 }
 
-static int	key_releases(int i, t_view *view)
+static void	key_releases(int i, t_view *view)
 {
 	if (i == SDL_SCANCODE_W || i == SDL_SCANCODE_UP)
 		view->p->stepping[0] = 0;
@@ -40,10 +40,9 @@ static int	key_releases(int i, t_view *view)
 		view->p->rotating[0] = 0;
 	else if (i == SDL_SCANCODE_A || i == SDL_SCANCODE_LEFT)
 		view->p->rotating[1] = 0;
-	return (1);
 }
 
-static int	key_presses(int i, t_view *view)
+static void	key_presses(int i, t_view *view)
 {
 	if (i == SDL_SCANCODE_W || i == SDL_SCANCODE_UP)
 		view->p->stepping[0] = 1;
@@ -54,18 +53,20 @@ static int	key_presses(int i, t_view *view)
 	else if (i == SDL_SCANCODE_A || i == SDL_SCANCODE_LEFT)
 		view->p->rotating[1] = 1;
 	else if (i == SDL_SCANCODE_TAB)
+	{
 		view->minimap_on = !(view->minimap_on);
+		cast_walls(-1, view->g, view->p, view);
+	}
 	else if (i == SDL_SCANCODE_SPACE)
 		key_toggle(view, &view->textures_on, "Textures");
 	else if (i == SDL_SCANCODE_RETURN)
 		key_toggle(view, &view->shading_on, "Shading");
-	else if (i == SDL_SCANCODE_TAB)
-		cast_walls(-1, view->g, view->p, view);
+	else if (i == SDL_SCANCODE_P)
+		key_toggle(view, &view->print_player_on, "Printing");
 	else if (i == SDL_SCANCODE_H)
 		print_keyhelp();
 	else if (i == SDL_SCANCODE_ESCAPE)
 		exit(0);
-	return (1);
 }
 
 void		process_input(t_view *view)

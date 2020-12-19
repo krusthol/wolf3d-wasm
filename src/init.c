@@ -8,8 +8,8 @@ void					init_systems(t_view *v)
 		quit_error("Could not initialize SDL_ttf extension");
 	if (IMG_Init(IMG_INIT_PNG) == 0)
 		quit_error("Could not initialize SDL_image extension");
-	SDL_CreateWindowAndRenderer(640, 480, 0, &v->win, &v->ren);
-	v->surf = SDL_CreateRGBSurface(0, 640, 480, 32, 0, 0, 0, 0);
+	SDL_CreateWindowAndRenderer(1280, 800, 0, &v->win, &v->ren);
+	v->surf = SDL_CreateRGBSurface(0, 1280, 800, 32, 0, 0, 0, 0);
 	if (v->win == NULL || v->ren == NULL || v->surf == NULL)
 		quit_error("Could not initialize window, surface and renderer.");
 }
@@ -24,20 +24,6 @@ void					init_memory(t_view *v)
 		quit_error("Fatal Error: TTF_RenderText_Solid failed.");
 	v->pix = v->surf->pixels;
 	v->pix_limit = (v->surf->h * v->surf->w);
-}
-
-static unsigned int	color(unsigned int percent, unsigned int color)
-{
-	unsigned int red;
-	unsigned int green;
-	unsigned int blue;
-
-	if (percent > 99)
-		return (color);
-	blue = ((color & 0xFF) * percent) / 100;
-	green = (((color >> 8) & 0xFF) * percent) / 100;
-	red = (((color >> 16) & 0xFF) * percent) / 100;
-	return ((red << 16) | (green << 8) | blue);
 }
 
 void		populate_color_tables(unsigned int wall_colors[600])
@@ -97,6 +83,7 @@ void		initialize_states(t_view *view)
 	view->minimap_on = 0;
 	view->textures_on = 1;
 	view->shading_on = 1;
+	view->print_player_on = 0;
 	view->p->rotating[0] = 0;
 	view->p->rotating[1] = 0;
 	view->p->stepping[0] = 0;

@@ -10,16 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 static void		slice_colored(int t[4], int from_to[2], int facing,
 	t_view *view)
 {
 	unsigned int	percent;
 	int				y;
-	int				*buffer;
+	unsigned int	*buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	y = 0;
 	if (!view->shading_on)
 		percent = 99;
@@ -69,44 +69,16 @@ static void		draw_colored_walls(int *walls, int *facing, int *txt_offset,
 	}
 }
 
-static void		thread_out(int *walls, int *facing, int *txt_offset,
-	t_view *view)
-{
-	t_pack		thread_pack;
-	pthread_t	threads[8];
-	int			id;
-	int			threads_finished;
-
-	threads_finished = 0;
-	id = 0;
-	thread_pack.view = view;
-	thread_pack.finished_threads = &threads_finished;
-	thread_pack.walls = walls;
-	thread_pack.facing = facing;
-	thread_pack.txt_offset = txt_offset;
-	while (id < 8)
-	{
-		thread_pack.thread_id = id;
-		pthread_create(&threads[id], NULL, threaded_textured_walls,
-			&thread_pack);
-		pthread_join(threads[id], NULL);
-		id++;
-	}
-	while (threads_finished != 8)
-		id = 0;
-	return ;
-}
-
 void			draw_walls(int *walls, int *facing, int *txt_offset,
 	t_view *view)
 {
-	if (view->textures_on && view->threading_on)
-		thread_out(walls, facing, txt_offset, view);
-	else if (view->textures_on)
+	prepare_gpu(view);
+	SDL_FillRect(view->surf, NULL, 0x00000000);
+	if (view->textures_on)
 		draw_textured_walls(walls, facing, txt_offset, view);
 	else
 		draw_colored_walls(walls, facing, txt_offset, view);
 	if (view->minimap_on)
 		draw_minimap(view);
-	mlx_put_image_to_window(view->mlx, view->window, view->img, 0, 0);
+	update_gpu(view);
 }

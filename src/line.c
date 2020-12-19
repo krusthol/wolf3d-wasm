@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 static t_line	*quad(int quad_mode, t_line *l)
 {
@@ -42,11 +42,11 @@ static t_line	*quad(int quad_mode, t_line *l)
 
 static void		line_draw(t_line *l, t_view *v, int delta_x, int delta_y)
 {
-	int	abs_deltas[2];
-	int kx;
-	int	*buffer;
+	int				abs_deltas[2];
+	int				kx;
+	unsigned int	*buffer;
 
-	buffer = v->idp->int_buffer;
+	buffer = v->pix;
 	abs_deltas[0] = abs(delta_x);
 	abs_deltas[1] = abs(delta_y);
 	kx = 2 * abs_deltas[1] - abs_deltas[0];
@@ -70,11 +70,11 @@ static void		line_draw(t_line *l, t_view *v, int delta_x, int delta_y)
 
 static void		line_mirror(t_line *l, t_view *v, int delta_x, int delta_y)
 {
-	int abs_deltas[2];
-	int ky;
-	int *buffer;
+	int				abs_deltas[2];
+	int				ky;
+	unsigned int	*buffer;
 
-	buffer = v->idp->int_buffer;
+	buffer = v->pix;
 	abs_deltas[0] = abs(delta_x);
 	abs_deltas[1] = abs(delta_y);
 	ky = 2 * abs_deltas[0] - abs_deltas[1];

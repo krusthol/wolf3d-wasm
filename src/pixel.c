@@ -10,16 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 void	shaded_roof(int x, int from, t_view *view)
 {
 	int y;
 	int	shade;
-	int	*roof_shades;
-	int	*buffer;
+	unsigned int *roof_shades;
+	unsigned int *buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	roof_shades = &(view->wall_colors[400]);
 	shade = 75;
 	y = 0;
@@ -35,10 +35,10 @@ void	shaded_floor(int x, int to, t_view *view)
 {
 	int y;
 	int	shade;
-	int	*floor_shades;
-	int	*buffer;
+	unsigned int *floor_shades;
+	unsigned int *buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	y = 799;
 	floor_shades = &(view->wall_colors[500]);
 	shade = 85;
@@ -50,11 +50,11 @@ void	shaded_floor(int x, int to, t_view *view)
 	}
 }
 
-int		color(unsigned int percent, int color)
+unsigned int	color(unsigned int percent, unsigned int color)
 {
-	int red;
-	int green;
-	int blue;
+	unsigned int red;
+	unsigned int green;
+	unsigned int blue;
 
 	if (percent > 99)
 		return (color);
@@ -64,7 +64,7 @@ int		color(unsigned int percent, int color)
 	return ((red << 16) | (green << 8) | blue);
 }
 
-void	pixel_to_img(int *buffer, unsigned int x, unsigned int y, int color)
+void	pixel_to_img(unsigned int *buffer, unsigned int x, unsigned int y, unsigned int color)
 {
 	size_t	pixel;
 

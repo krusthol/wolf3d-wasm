@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "wolf3dheader"
+#include "wolf3d.h"
 
 static void	draw_arrow(t_view *view, t_line arrow, t_line r_wing, t_line l_wing)
 {
@@ -41,8 +41,8 @@ static void	draw_arrow(t_view *view, t_line arrow, t_line r_wing, t_line l_wing)
 	line(&l_wing, view);
 }
 
-static void	arrow_geometry(t_line arrow[3], int off_xy[2], int d_xy2[4],
-	int *sin_cos_10_25)
+static void	arrow_geometry(t_line arrow[3], const int off_xy[2], int d_xy2[4],
+	const int *sin_cos_10_25)
 {
 	arrow[0].x1 = 640 - (off_xy[0] - d_xy2[0]);
 	arrow[0].x2 = 640 + (off_xy[0] - d_xy2[0]);
@@ -86,9 +86,9 @@ static void	minimap_grid(t_view *view, int x, int y, int lim_xy[2])
 	int xy[2];
 	int grid[2];
 	int off_xy[2];
-	int	*buffer;
+	unsigned int *buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	off_xy[0] = view->p->x;
 	off_xy[1] = view->p->y;
 	while (y++ < 641)
@@ -117,14 +117,14 @@ void		draw_minimap(t_view *view)
 
 	lim_xy[0] = view->g->cols;
 	lim_xy[1] = view->g->rows;
-	sin_cos_10_25[0] = (int)(sin(view->p->rad) * 10);
-	sin_cos_10_25[1] = (int)(cos(view->p->rad) * 10);
-	sin_cos_10_25[2] = (int)(sin(view->p->rad) * 25);
-	sin_cos_10_25[3] = (int)(cos(view->p->rad) * 25);
-	sin_cos_10_25[4] = (int)(sin(view->p->rad + 1) * 10);
-	sin_cos_10_25[5] = (int)(cos(view->p->rad + 1) * 10);
-	sin_cos_10_25[6] = (int)(sin(view->p->rad - 1) * 10);
-	sin_cos_10_25[7] = (int)(cos(view->p->rad - 1) * 10);
+	sin_cos_10_25[0] = (int)(sinl(view->p->rad) * 10);
+	sin_cos_10_25[1] = (int)(cosl(view->p->rad) * 10);
+	sin_cos_10_25[2] = (int)(sinl(view->p->rad) * 25);
+	sin_cos_10_25[3] = (int)(cosl(view->p->rad) * 25);
+	sin_cos_10_25[4] = (int)(sinl(view->p->rad + 1) * 10);
+	sin_cos_10_25[5] = (int)(cosl(view->p->rad + 1) * 10);
+	sin_cos_10_25[6] = (int)(sinl(view->p->rad - 1) * 10);
+	sin_cos_10_25[7] = (int)(cosl(view->p->rad - 1) * 10);
 	minimap_grid(view, -1, -1, lim_xy);
 	minimap_player(view, view->p, sin_cos_10_25);
 }

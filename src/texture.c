@@ -11,16 +11,15 @@
 /* ************************************************************************** */
 
 #include "wolf3d.h"
-/*
-static void		slice_shaded(int t[4], int from_to[2], int *txt_buffer,
-	t_view *view)
+
+static void		slice_shaded(int t[4], int from_to[2], unsigned int *txt_buffer, t_view *view)
 {
 	unsigned int	percent;
 	int				i_txt;
 	float			i_step;
-	int				*buffer;
+	unsigned int	*buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	i_step = t[3] == 0 ? 256.0 / (from_to[1] - from_to[0]) : 256.0 /
 		(from_to[1] + t[3] - from_to[0]);
 	i_txt = t[3] == 0 ? 0 :
@@ -39,15 +38,14 @@ static void		slice_shaded(int t[4], int from_to[2], int *txt_buffer,
 	shaded_floor(t[0], from_to[1], view);
 }
 
-static void		slice_raw(int t[4], int from_to[2], int facing,
-	t_view *view)
+static void		slice_raw(int t[4], int from_to[2], int facing, t_view *view)
 {
 	int				zero_y;
 	int				i_txt;
 	float			i_step;
-	int				*buffer;
+	unsigned int	*buffer;
 
-	buffer = view->idp->int_buffer;
+	buffer = view->pix;
 	zero_y = 0;
 	i_step = t[3] == 0 ? 256.0 / (from_to[1] - from_to[0]) : 256.0 /
 		(from_to[1] + t[3] - from_to[0]);
@@ -65,8 +63,7 @@ static void		slice_raw(int t[4], int from_to[2], int facing,
 		pixel_to_img(buffer, t[0], from_to[1]++, 0x888888);
 }
 
-void			draw_textured_walls(int *walls, int *facing, int *txt_offset,
-	t_view *view)
+void			draw_textured_walls(const int *walls, int *facing, const int *txt_offset, t_view *view)
 {
 	double	height;
 	int		from_to[2];
@@ -92,7 +89,7 @@ void			draw_textured_walls(int *walls, int *facing, int *txt_offset,
 		i++;
 	}
 }
-*/
+
 void			load_textures(t_view *view)
 {
 	char	*texture_filenames[4];

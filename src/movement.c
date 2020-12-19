@@ -12,7 +12,7 @@
 
 #include "wolf3d.h"
 
-static void	coast_rotate(t_player *p, long double *rads360)
+static void	coast_rotate(t_player *p, const long double *rads360)
 {
 	if (p->rotation_velo > 8 && p->rotation_velo < -8)
 	{
@@ -44,14 +44,13 @@ static void	coast_step(t_player *p, t_grid *grid)
 		: p->stepping_velo + 2;
 	if (abs(p->stepping_velo) < 2)
 		p->stepping_velo = 0;
-	dx = p->x + (int)(cos(p->rad) * p->stepping_velo);
-	dy = p->y - (int)(sin(p->rad) * p->stepping_velo);
+	dx = p->x + (int)(cosl(p->rad) * p->stepping_velo);
+	dy = p->y - (int)(sinl(p->rad) * p->stepping_velo);
 	if ((dx > 256 && dy > 256) && (dx < (grid->cols - 1) * 256
 				&& dy < (grid->rows - 1) * 256))
 	{
-		if (dir && !(grid->grid[(dy + cy) >> 8][(dx + cx) >> 8] == '.'))
-			return (stop_velocity(p));
-		else if (!dir && !(grid->grid[(dy) >> 8][(dx) >> 8] == '.'))
+		if ((dir && grid->grid[(dy + cy) >> 8][(dx + cx) >> 8] != '.')
+			|| (!dir && grid->grid[(dy) >> 8][(dx) >> 8] != '.'))
 			return (stop_velocity(p));
 		p->x = dx;
 		p->y = dy;
@@ -69,21 +68,20 @@ static void	step_player(t_player *p, t_grid *grid, int dir)
 	p->stepping_velo = p->stepping_velo + dir * 3;
 	if (p->stepping_velo > 24 || p->stepping_velo < -24)
 		p->stepping_velo = p->stepping_velo > 0 ? 24 : -24;
-	dx = p->x + (int)(cos(p->rad) * p->stepping_velo);
-	dy = p->y - (int)(sin(p->rad) * p->stepping_velo);
+	dx = p->x + (int)(cosl(p->rad) * p->stepping_velo);
+	dy = p->y - (int)(sinl(p->rad) * p->stepping_velo);
 	if ((dx > 256 && dy > 256) && (dx < (grid->cols - 1) * 256
 				&& dy < (grid->rows - 1) * 256))
 	{
-		if (dir == 1 && !(grid->grid[(dy + cy) >> 8][(dx + cx) >> 8] == '.'))
-			return (stop_velocity(p));
-		else if (dir == -1 && !(grid->grid[(dy) >> 8][(dx) >> 8] == '.'))
+		if ((dir == 1 && grid->grid[(dy + cy) >> 8][(dx + cx) >> 8] != '.')
+			|| (dir == -1 && grid->grid[(dy) >> 8][(dx) >> 8] != '.'))
 			return (stop_velocity(p));
 		p->x = dx;
 		p->y = dy;
 	}
 }
 
-static void	rotate_player(t_player *p, long double *rads360, int direction)
+static void	rotate_player(t_player *p, const long double *rads360, int direction)
 {
 	p->rotation_velo = p->rotation_velo + (direction * 12);
 	if (p->rotation_velo > 192 || p->rotation_velo < -192)
