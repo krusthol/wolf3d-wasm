@@ -19,9 +19,20 @@ void					init_memory(t_view *v)
 	v->ibm_font = TTF_OpenFont("assets/ibm_bios.ttf", 12);
 	if (!v->ibm_font)
 		quit_error("Fatal Error: TTF_OpenFont failed.");
-	v->font_surf = TTF_RenderText_Solid(v->ibm_font, "Kimpsut ja Kampsut", v->color_white);
+	v->font_surf = TTF_RenderText_Solid(v->ibm_font, "--- ", v->color_white);
 	if (!v->font_surf)
 		quit_error("Fatal Error: TTF_RenderText_Solid failed.");
+	v->fps_surf = TTF_RenderText_Solid(v->ibm_font, "FPS", v->color_white);
+	if (!v->fps_surf)
+		quit_error("Fatal Error: TTF_RenderText_Solid failed.");
+	v->fps_rect.w = v->fps_surf->w;
+	v->fps_rect.h = v->fps_surf->h;
+	v->fps_rect.x = 60;
+	v->fps_rect.y = 10;
+	v->font_rect.w = v->font_surf->w;
+	v->font_rect.h = v->font_surf->h;
+	v->font_rect.x = v->fps_rect.x - v->font_rect.w;
+	v->font_rect.y = v->fps_rect.y;
 	v->pix = v->surf->pixels;
 	v->pix_limit = (v->surf->h * v->surf->w);
 }
@@ -83,6 +94,7 @@ void		initialize_states(t_view *view)
 	view->minimap_on = 0;
 	view->textures_on = 1;
 	view->shading_on = 1;
+	view->fps_on = 1;
 	view->p->rotating[0] = 0;
 	view->p->rotating[1] = 0;
 	view->p->stepping[0] = 0;
@@ -96,40 +108,6 @@ void		initialize_states(t_view *view)
 
 void		initialize_view(t_view *view, char *title)
 {
-	/*
-	 * // WONT NEED
-	view->mlx = mlx_init();
-	// WONT NEED
-	view->idp = &(view->img_data);
-	 // WONT NEED
-	if (!(view->window = mlx_new_window(view->mlx, 1280, 800, title)))
-		exit(print_error(MEMORY_ERROR));
-	 // WONT NEED
-	if (!(view->img = mlx_new_image(view->mlx, 1280, 800)))
-		exit(print_error(MEMORY_ERROR));
-	 // WONT NEED
-	view->idp->buffer = mlx_get_data_addr(view->img,
-										  &(view->idp->bits_per_pixel), &(view->idp->bytes_per_line),
-										  &(view->idp->endianness));
-	view->idp->int_buffer = (int *)view->idp->buffer;
-	 // WONT NEED
-	mlx_do_key_autorepeatoff(view->mlx);
-	 // WONT NEED
-	mlx_clear_window(view->mlx, view->window);
-	 // WONT NEED
-	hook_input(view);*/
-
-	// ALREADY DONE EARLIER IN CODE ATM
-	/*if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_EVENTS) < 0)
-		quit_error("Could not initialize SDL base systems");
-	if (TTF_Init() != 0)
-		quit_error("Could not initialize SDL_ttf extension");
-	if (IMG_Init(IMG_INIT_PNG) == 0)
-		quit_error("Could not initialize SDL_image extension");
-	SDL_CreateWindowAndRenderer(640, 480, 0, &g_win, &g_ren);
-	g_surf = SDL_CreateRGBSurface(0, 640, 480, 32, 0, 0, 0, 0);
-	if (g_win == NULL || g_ren == NULL || g_surf == NULL)
-		quit_error("Could not initialize window, surface and renderer.");*/
 	view->quit = 0;
 	if (title != NULL)
 		load_textures(view);

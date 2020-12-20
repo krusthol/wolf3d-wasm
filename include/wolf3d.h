@@ -70,6 +70,9 @@ typedef struct			s_view
 	int 				quit;
 	struct _TTF_Font	*ibm_font;
 	struct SDL_Surface	*font_surf;
+	struct SDL_Surface	*fps_surf;
+	struct SDL_Rect		font_rect;
+	struct SDL_Rect		fps_rect;
 	SDL_Color 			color_white;
 	SDL_Event 			event;
 
@@ -84,6 +87,7 @@ typedef struct			s_view
 	int					minimap_on;
 	int					textures_on;
 	int					shading_on;
+	int 				fps_on;
 
 	long double			fisheye1280[1280];
 	long double			rads360[360];
@@ -93,22 +97,23 @@ typedef struct			s_view
 }						t_view;
 
 
-/* from main.c */
+// init.c
 void					populate_color_tables(unsigned int wall_colors[600]);
 void					populate_doubles_tables(long double rads360[360], long double
 rads7680[7680], long double tans7680[7680], long double fisheye1280[1280]);
 void					initialize_states(t_view *view);
 void					initialize_view(t_view *view, char *title);
-
-/* from init.c */
 void					init_systems(t_view *view);
 void					init_memory(t_view *view);
 
-/* from console.c */
+// console.c
 void					print_keyhelp(void);
 int						print_error(int code);
 void					close_and_exit(int fd_to_close, int code);
 void					print_intro(char *file_arg);
+
+// rotate_and_step.c
+void					rotate_and_step(t_view *view);
 
 // gnl.c
 int						get_next_line(const int fd, char **line);
@@ -139,7 +144,7 @@ int						check_horz_intersect(t_grid *grid, t_player *p, int res[2], long double
 // casting.c
 void					cast_walls(int i, t_grid *grid, t_player *p, t_view *view);
 
-// movement.c
+// time_movement.c
 void					calc_movements(t_view *view);
 
 // input.c

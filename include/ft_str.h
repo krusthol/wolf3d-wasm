@@ -51,5 +51,7 @@ char				*ft_strtrim(char const *s);
 char				*ft_strstr(const char *haystack, const char *needle);
 char				**ft_strsplit(char const *s, char c);
 int					ft_words(char const *s, char c);
+char 				*ft_itoa(int n);
+int					ft_edgeint(char const *s);
 
 #endif

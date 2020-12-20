@@ -61,6 +61,8 @@ static void	key_presses(int i, t_view *view)
 		key_toggle(view, &view->textures_on, "Textures");
 	else if (i == SDL_SCANCODE_RETURN)
 		key_toggle(view, &view->shading_on, "Shading");
+	else if (i == SDL_SCANCODE_F)
+		key_toggle(view, &view->fps_on, "FPS");
 	else if (i == SDL_SCANCODE_H)
 		print_keyhelp();
 	else if (i == SDL_SCANCODE_ESCAPE)

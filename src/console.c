@@ -20,20 +20,26 @@ void	close_and_exit(int fd_to_close, int code)
 
 void	print_keyhelp(void)
 {
-	write(1, "wolf3d-wasm keyhelp:\n", 21);
-	write(1, "\tWASD arrows\tMove\n", 18);
+	//write(1, "wolf3d-wasm keyhelp\n\n", 21);
+	write(1, "\n\tWASD\t\t\tMove\n", 14);
+	write(1, "\tArrows\t\tMove\n", 14);
 	write(1, "\tTab\t\tToggle minimap\n", 21);
 	write(1, "\tEnter\t\tToggle shading\n", 23);
 	write(1, "\tSpace\t\tToggle texturing\n", 25);
 	write(1, "\tH\t\tShow keyhelp\n", 17);
+#ifndef __EMSCRIPTEN__
 	write(1, "\tEsc\t\tQuit wolf3d-wasm\n", 23);
+#endif
 }
 
 void	print_intro(char *file_arg)
 {
-	write(1, "wolf3d-wasm valid map [", 23);
+	if (file_arg != NULL)
+		write(1, "wolf3d-wasm loaded, press H for keyhelp\n", 40);
+#ifndef __EMSCRIPTEN__
 	write(1, file_arg, ft_strlen(file_arg));
-	write(1, "] loaded! Show keyhelp by pressing H\n", 37);
+	write(1, " loaded! Map data was valid.\n", 29);
+#endif
 }
 
 int		print_error(int code)

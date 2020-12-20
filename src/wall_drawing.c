@@ -69,8 +69,7 @@ static void		draw_colored_walls(int *walls, int *facing, int *txt_offset,
 	}
 }
 
-void			draw_walls(int *walls, int *facing, int *txt_offset,
-	t_view *view)
+void			draw_walls(int *walls, int *facing, int *txt_offset, t_view *view)
 {
 	prepare_gpu(view);
 	SDL_FillRect(view->surf, NULL, 0x00000000);
@@ -80,5 +79,10 @@ void			draw_walls(int *walls, int *facing, int *txt_offset,
 		draw_colored_walls(walls, facing, txt_offset, view);
 	if (view->minimap_on)
 		draw_minimap(view);
+	if (view->fps_on)
+	{
+		SDL_BlitSurface(view->font_surf, NULL, view->surf, &view->font_rect);
+		SDL_BlitSurface(view->fps_surf, NULL, view->surf, &view->fps_rect);
+	}
 	update_gpu(view);
 }

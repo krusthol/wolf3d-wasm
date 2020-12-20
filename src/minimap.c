@@ -12,6 +12,21 @@
 
 #include "wolf3d.h"
 
+#define OFF_X 630
+#define OFF_Y 10
+#define POFF_X 320 - OFF_X
+#define POFF_Y 80 - OFF_Y
+
+static void fat_line(t_line *l, t_view *view)
+{
+	offset_line(POFF_X, POFF_Y, l);
+	line(l, view);
+	offset_line(1, 0, l);
+	line(l, view);
+	offset_line(-2, 0, l);
+	line(l, view);
+}
+
 static void	draw_arrow(t_view *view, t_line arrow, t_line r_wing, t_line l_wing)
 {
 	int		off_xy[2];
@@ -36,9 +51,9 @@ static void	draw_arrow(t_view *view, t_line arrow, t_line r_wing, t_line l_wing)
 		offset_line(0, (1280 - off_xy[1]) >> 2, &r_wing);
 		offset_line(0, (1280 - off_xy[1]) >> 2, &l_wing);
 	}
-	line(&arrow, view);
-	line(&r_wing, view);
-	line(&l_wing, view);
+	fat_line(&arrow, view);
+	fat_line(&r_wing, view);
+	fat_line(&l_wing, view);
 }
 
 static void	arrow_geometry(t_line arrow[3], const int off_xy[2], int d_xy2[4],
@@ -48,21 +63,21 @@ static void	arrow_geometry(t_line arrow[3], const int off_xy[2], int d_xy2[4],
 	arrow[0].x2 = 640 + (off_xy[0] - d_xy2[0]);
 	arrow[0].y1 = 400 - (off_xy[1] - d_xy2[1]);
 	arrow[0].y2 = 400 + (off_xy[1] - d_xy2[1]);
-	arrow[0].color = 0xFF00FF;
+	arrow[0].color = 0xFFFFFF;
 	d_xy2[0] = d_xy2[0] + sin_cos_10_25[5];
 	d_xy2[1] = d_xy2[1] - sin_cos_10_25[4];
 	arrow[1].x1 = 640 - (off_xy[0] - d_xy2[0]);
 	arrow[1].x2 = 640 - (off_xy[0] - d_xy2[2]);
 	arrow[1].y1 = 400 - (off_xy[1] - d_xy2[1]);
 	arrow[1].y2 = 400 - (off_xy[1] - d_xy2[3]);
-	arrow[1].color = 0xFF00FF;
+	arrow[1].color = 0xFFFFFF;
 	d_xy2[0] = (off_xy[0] + sin_cos_10_25[1] + sin_cos_10_25[7]);
 	d_xy2[1] = (off_xy[1] - sin_cos_10_25[0] - sin_cos_10_25[6]);
 	arrow[2].x1 = 640 - (off_xy[0] - d_xy2[0]);
 	arrow[2].x2 = 640 - (off_xy[0] - d_xy2[2]);
 	arrow[2].y1 = 400 - (off_xy[1] - d_xy2[1]);
 	arrow[2].y2 = 400 - (off_xy[1] - d_xy2[3]);
-	arrow[2].color = 0xFF00FF;
+	arrow[2].color = 0xFFFFFF;
 }
 
 static void	minimap_player(t_view *view, t_player *p, int *sin_cos_10_25)
@@ -99,12 +114,10 @@ static void	minimap_grid(t_view *view, int x, int y, int lim_xy[2])
 		{
 			xy[0] = off_xy[0] > 1280 ? x + ((off_xy[0] - 1280) >> 2) : x;
 			grid[0] = (xy[0] >> 6) < lim_xy[0] ? xy[0] >> 6 : (lim_xy[0] - 1);
-			if ((x == 641 || y == 0 || y == 641 || x == 0)
-				|| (((xy[1] & 15) == 0 || (xy[0] & 15) == 0)
-				&& view->g->grid[grid[1]][grid[0]] == 'W'))
-				pixel_to_img(buffer, x + 320, y + 80, 0xFF00FF);
-			if (((xy[1] & 63) == 0 || (xy[0] & 63) == 0))
-				pixel_to_img(buffer, x + 320, y + 80, 0x00FF00);
+			if (((x == 641 || y == 0 || y == 641 || x == 0) || (((xy[1] & 3) == 0 || (xy[0] & 3) == 0) && view->g->grid[grid[1]][grid[0]] == 'W')))
+				pixel_to_img(buffer, x + OFF_X, y + OFF_Y, 0xFFFFFF);
+			if (((xy[1] & 61) == 0 || (xy[0] & 61) == 0))
+				pixel_to_img(buffer, x + OFF_X, y + OFF_Y, 0xFFFFFF);
 		}
 		x = -1;
 	}

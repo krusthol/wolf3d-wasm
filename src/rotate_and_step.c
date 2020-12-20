@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   movement.c                                         :+:      :+:    :+:   */
+/*   rotate_and_step.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krusthol <krusthol@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,11 +14,17 @@
 
 static void	coast_rotate(t_player *p, const long double *rads360)
 {
-	if (p->rotation_velo > 8 || p->rotation_velo < -8)
-		p->rotation_velo = p->rotation_velo > 0 ? p->rotation_velo - 8: p->rotation_velo + 8;
+	int delta_units;
+
+	if (p->rotation_velo > 16 || p->rotation_velo < -16)
+		p->rotation_velo = p->rotation_velo > 0 ? p->rotation_velo - 16: p->rotation_velo + 16;
 	else
 		p->rotation_velo = 0;
-	p->move_look += p->rotation_velo >> 6;
+	delta_units = (abs(p->rotation_velo)) >> 6;
+	if (p->rotation_velo > 0)
+		p->move_look += delta_units;
+	else
+		p->move_look -= delta_units;
 	if (p->move_look < 0)
 		p->move_look = 359 + p->move_look;
 	if (p->move_look > 359)
@@ -82,90 +88,38 @@ static void	step_player(t_player *p, t_grid *grid, int dir)
 
 static void	rotate_player(t_player *p, long double *rads360, int direction)
 {
+	int delta_units;
+
 	p->rotation_velo = p->rotation_velo + (direction * 12);
-	if (p->rotation_velo > 192 || p->rotation_velo < -192)
-		p->rotation_velo = p->rotation_velo > 0 ? 192 : -192;
+	if (p->rotation_velo > 255 || p->rotation_velo < -255)
+		p->rotation_velo = p->rotation_velo > 0 ? 255 : -255;
+	delta_units = (abs(p->rotation_velo)) >> 6;
 	if (direction == -1)
 	{
-		p->move_look += p->rotation_velo >> 6;
+		p->move_look -= delta_units;
 		if (p->move_look < 0)
 			p->move_look = 359 + p->move_look;
 		p->rad = rads360[(p->move_look)];
 	}
 	else if (direction == 1)
 	{
-		p->move_look += p->rotation_velo >> 6;
+		p->move_look += delta_units;
 		if (p->move_look > 359)
 			p->move_look = 0 + (p->move_look - 359);
 		p->rad = rads360[(p->move_look)];
 	}
 }
 
-void		calc_movements(t_view *view)
+void		rotate_and_step(t_view *view)
 {
-	//Rotation difference between left, right, debug stack
-	//Propably bugged because of int division not being symmetrical
-	static int	rotted_0 = 0;
-	static int	rotted_1 = 0;
-	static int	peak = 0;
-	static int	valley = 0;
-	static int 	delta_move = 0;
-	static int 	begin_move = 0;
-
-	// Rotation stack
 	if (view->p->rotating[0] && view->p->rotating[1])
-	{
-		//puts("Both rotation keys pressed!");
 		coast_rotate(view->p, view->rads360);
-	}
 	else if (view->p->rotating[0])
-	{
-		//puts("Rotation[0] key pressed!");
-		if (!begin_move)
-		{
-			begin_move = 1;
-			delta_move = view->p->move_look;
-		}
 		rotate_player(view->p, view->rads360, view->p->rotating[0]);
-		rotted_0++;
-		if (view->p->rotation_velo > peak)
-			peak = view->p->rotation_velo;
-		if (view->p->rotation_velo < valley)
-			valley = view->p->rotation_velo;
-
-
-	}
 	else if (view->p->rotating[1])
-	{
-		//puts("Rotation[1] key pressed!");
-		if (!begin_move)
-		{
-			begin_move = 1;
-			delta_move = view->p->move_look;
-		}
 		rotate_player(view->p, view->rads360, view->p->rotating[1]);
-		rotted_1++;
-		if (view->p->rotation_velo > peak)
-			peak = view->p->rotation_velo;
-		if (view->p->rotation_velo < valley)
-			valley = view->p->rotation_velo;
-	}
 	else if (view->p->rotation_velo != 0)
-	{
-		//puts("Remnant rotation, while no rotation keys are pressed!");
 		coast_rotate(view->p, view->rads360);
-	}
-	else if (view->p->rotation_velo == 0 && (peak != 0 || valley != 0))
-	{
-		//puts("Rotation stopped!");
-		//printf("DELTA = % d | Rotted_0 = %d | Rotted_1 = %d | Peak = %d | Valley = %d\n", abs(delta_move - view->p->move_look), rotted_0, rotted_1, peak, valley);
-		rotted_0 = 0;
-		rotted_1 = 0;
-		peak = 0;
-		valley = 0;
-		begin_move = 0;
-	}
-	// Forward and backwards movement stack
 	if (view->p->stepping[0] && view->p->stepping[1])
 		coast_step(view->p, view->g);
 	else if (view->p->stepping[0])
@@ -174,6 +128,4 @@ void		calc_movements(t_view *view)
 		step_player(view->p, view->g, view->p->stepping[1]);
 	else if (view->p->stepping_velo != 0)
 		coast_step(view->p, view->g);
-	if (view->p->rotation_velo != 0 || view->p->stepping_velo != 0)
-		cast_walls(-1, view->g, view->p, view);
 }

@@ -47,6 +47,7 @@ static int	load_map_line(char *buff, int (correct)(char c))
 	return (0);
 }
 
+#ifndef __EMSCRIPTEN__
 static void print_data(char *data, int cols, int rows)
 {
 	int i = 0;
@@ -62,6 +63,7 @@ static void print_data(char *data, int cols, int rows)
 	}
 	puts("\nEnd of data");
 }
+#endif
 
 static int	read_map(int opened, t_view *view)
 {
@@ -88,7 +90,9 @@ static int	read_map(int opened, t_view *view)
 		free(buff);
 	}
 	view->g->grid = grid_set(view->g->rows, view->g->cols, data);
+#ifndef __EMSCRIPTEN__
 	print_data(data, view->g->cols, view->g->rows);
+#endif
 	free(data);
 	close(opened);
 	return (0);

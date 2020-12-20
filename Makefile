@@ -14,7 +14,7 @@ NAME = wolf3d
 SRC = $(wildcard src/*.c)
 SRC += $(wildcard src/ft_str/*.c)
 OBJ = $(subst .c,.o,$(SRC))
-CFLAGS = -Wall -Wextra -Iinclude -g
+CFLAGS = -Wall -Wextra -O3 -Iinclude
 LIBS = -lSDL2 -lSDL2_ttf -lSDL2_image
 LINUX_LINKS = -lm -lXext -lX11 -lpthread
 ASSETS = assets
@@ -33,6 +33,9 @@ emcc: fclean
 prod: fclean
 	-emmake make
 	@emcc $(EM_FLAGS) $(EM_PROD) $(OBJ) -o $(EM_OUT_DIR)/$(EM_NAME)
+
+serve:
+	python3 -m http.server & google-chrome-stable http://0.0.0.0:8000/$(EM_OUT_DIR)/$(EM_NAME)
 
 web: emcc
 	python3 -m http.server & google-chrome-stable http://0.0.0.0:8000/$(EM_OUT_DIR)/$(EM_NAME)
