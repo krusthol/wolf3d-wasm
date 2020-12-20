@@ -19,7 +19,7 @@ void					init_memory(t_view *v)
 	v->ibm_font = TTF_OpenFont("assets/ibm_bios.ttf", 12);
 	if (!v->ibm_font)
 		quit_error("Fatal Error: TTF_OpenFont failed.");
-	v->font_surf = TTF_RenderText_Solid(v->ibm_font, "--- ", v->color_white);
+	v->font_surf = TTF_RenderText_Solid(v->ibm_font, "    ", v->color_white);
 	if (!v->font_surf)
 		quit_error("Fatal Error: TTF_RenderText_Solid failed.");
 	v->fps_surf = TTF_RenderText_Solid(v->ibm_font, "FPS", v->color_white);
